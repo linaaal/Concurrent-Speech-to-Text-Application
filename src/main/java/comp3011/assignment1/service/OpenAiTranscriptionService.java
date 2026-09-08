@@ -22,13 +22,14 @@ public class OpenAiTranscriptionService {
     public OpenAiTranscriptionService(
             RestClient openAiRestClient,
             GlobalStatisticsService globalStatisticsService,
-            @Value("${openai.transcripton-model}")
+            @Value("${openai.transcription-model}")
             String transcriptionModel) {
 
         this.openAiRestClient = openAiRestClient;
         this.globalStatisticsService = globalStatisticsService;
         this.transcriptionModel = transcriptionModel;
     }
+
 
     // Sends an uploaded audio file to OpenAI and returns resulting transcription.
     public String transcribe(MultipartFile audioFile) {
@@ -39,30 +40,30 @@ public class OpenAiTranscriptionService {
                     "An audio file must be provided.");
         }
 
-        // Build multipart from required by the transcription API
+        // Build multipart form required by the transcription API
         MultiValueMap<String, Object> requestBody =
                 new LinkedMultiValueMap<>();
 
-        requestBody.add("audio", audioFile.getResource());
+        requestBody.add("file", audioFile.getResource());
         requestBody.add("model", transcriptionModel);
-        requestBody.add("response_format", "text");
+        requestBody.add("response_format", "json");
 
         // Send the audio and map JSON response to Java record
         OpenAiTranscriptionResponse response =
                 openAiRestClient.post()
-                        .uri("/audio/transcription")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .uri("/audio/transcriptions")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
                         .body(requestBody)
                         .retrieve()
                         .body(OpenAiTranscriptionResponse.class);
 
-        // Transcription Validation 
-        if (response == null && response.text() == null) {
+        // Ensure a valid transcription was returned
+        if (response == null || response.text() == null) {
             throw new IllegalStateException(
                     "OpenAI did not return a transcription.");
         }
 
-        // Update thread-safe total when usage info is provided
+        // Update the thread-safe totals when usage information is available
         if (response.usage() != null) {
             globalStatisticsService.recordUsage(
                     response.usage().outputTokens(),
