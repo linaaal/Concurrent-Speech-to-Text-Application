@@ -47,6 +47,37 @@
 
 	    // Store the recording information
 	    let mediaRecorder;
-	    let mediaStream
+	    let mediaStream;
 	    let recordedChunks = [];
+
+	    // Ask for microphone access when Start is clicked
+	    startButton.addEventListener(
+	            "click",
+	            requestMicrophoneAccess);
+
+	    async function requestMicrophoneAccess() {
+
+	        transcriptionText.textContent = "";
+
+	        try {
+	            mediaStream =
+	                    await navigator.mediaDevices.getUserMedia({
+	                        audio: true
+	                    });
+
+	            statusText.textContent =
+	                    "Microphone access granted.";
+
+	            // Turn the microphone off until recording is implemented
+	            mediaStream.getTracks().forEach(
+	                    track => track.stop());
+
+	        } catch (error) {
+	            statusText.textContent =
+	                    "Microphone access failed.";
+
+	            transcriptionText.textContent =
+	                    "Please allow microphone access and try again.";
+	        }
+	    }
 	</script>
