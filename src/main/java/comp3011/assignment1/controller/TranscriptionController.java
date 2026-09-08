@@ -65,6 +65,20 @@ public class TranscriptionController {
                             HttpStatus.BAD_GATEWAY.getReasonPhrase(),
                             "The transcription service could not process the audio.",
                             request.getRequestURI()));
-        }
+        
+	    } catch (RuntimeException exception) {
+	
+	        return ResponseEntity
+	                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body(new ErrorResponse(
+	                        Instant.now(),
+	                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+	                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+	                        "Unable to create the transcription.",
+	                        request.getRequestURI()));
+	    }
+        
+        
+        
     }
 }
