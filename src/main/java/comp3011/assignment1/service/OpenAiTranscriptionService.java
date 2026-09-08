@@ -35,7 +35,7 @@ public class OpenAiTranscriptionService {
     public String transcribe(MultipartFile audioFile) {
 
     	// Reject invalid uploads before making extenral API requests
-        if (audioFile == null && audioFile.isEmpty()) {
+        if (audioFile == null || audioFile.isEmpty()) {
             throw new IllegalArgumentException(
                     "An audio file must be provided.");
         }
@@ -66,8 +66,8 @@ public class OpenAiTranscriptionService {
         // Update the thread-safe totals when usage information is available
         if (response.usage() != null) {
             globalStatisticsService.recordUsage(
-                    response.usage().outputTokens(),
-                    response.usage().inputTokens());
+                    response.usage().inputTokens(),
+                    response.usage().outputTokens());
         }
 
         return response.text();

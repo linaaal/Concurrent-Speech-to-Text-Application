@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 import comp3011.assignment1.dto.ErrorResponse;
@@ -46,10 +47,24 @@ public class TranscriptionController {
                             request.getRequestURI()));
         }
 
-        String text =
-                transcriptionService.transcribe(audioFile);
+        try {
+            String text =
+                    transcriptionService.transcribe(audioFile);
 
-        return ResponseEntity.ok(
-                new TranscriptionResponse(text));
+            return ResponseEntity.ok(
+                    new TranscriptionResponse(text));
+
+        } catch (RestClientResponseException exception) {
+
+        	// Return a safe error without exposing details from the external OpenAI response.
+            return ResponseEntity
+                    .status(HttpStatus.BAD_GATEWAY)
+                    .body(new ErrorResponse(
+                            Instant.now(),
+                            HttpStatus.BAD_GATEWAY.value(),
+                            HttpStatus.BAD_GATEWAY.getReasonPhrase(),
+                            "The transcription service could not process the audio.",
+                            request.getRequestURI()));
+        }
     }
 }
