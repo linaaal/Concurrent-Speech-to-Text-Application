@@ -39,7 +39,7 @@
 	    // Connect JavaScript to the webpage elements
 	    const startButton = document.getElementById("startButton");
 
-	    const stopButton = document.getElementById("stopButton)
+	    const stopButton = document.getElementById("stopButton");
 
 	    const statusText = document.getElementById("status");
 
@@ -50,27 +50,41 @@
 	    let mediaStream;
 	    let recordedChunks = [];
 
-	    // Ask for microphone access when Start is clicked
-	    startButton.addEventListener(
-	            "click",
-	            requestMicrophoneAccess);
+	    // Run the correct function when a button is clicked
+	    startButton.addEventListener("click", startRecording);
+	    stopButton.addEventListener("click", stopRecording);
 
-	    async function requestMicrophoneAccess() {
+	    async function startRecording() {
 
 	        transcriptionText.textContent = "";
 
 	        try {
+	            // Ask the browser for microphone access
 	            mediaStream =
 	                    await navigator.mediaDevices.getUserMedia({
 	                        audio: true
 	                    });
 
-	            statusText.textContent =
-	                    "Microphone access granted.";
+	            // Create the browser's audio recorder
+	            mediaRecorder = new MediaRecorder(mediaStream);
 
-	            // Turn the microphone off until recording is implemented
-	            mediaStream.getTracks().forEach(
-	                    track => track.stop());
+	            recordedChunks = [];
+
+	            // Save each piece of recorded audio
+	            mediaRecorder.addEventListener(
+	                    "dataavailable",
+	                    event => {
+
+	                        if (event.data.size > 0) {
+	                            recordedChunks.push(event.data);
+	                        }
+	                    });
+
+	            mediaRecorder.start();
+
+	            statusText.textContent = "Recording started";
+	            startButton.disabled = true;
+	            stopButton.disabled = false;
 
 	        } catch (error) {
 	            statusText.textContent =
@@ -78,6 +92,32 @@
 
 	            transcriptionText.textContent =
 	                    "Please allow microphone access and try again.";
+
+	            startButton.disabled = false;
+	            stopButton.disabled = true;
 	        }
+	    }
+
+	    function stopRecording() {
+	        // Do nothing if audio is not currently being recorded
+	        if (mediaRecorder == null
+	                || mediaRecorder.state !== "recording") {
+
+	            return;
+	        }
+
+	        mediaRecorder.stop();
+
+	        // Turn off the microphone
+	        mediaStream.getTracks().forEach(
+	                track => track.stop());
+
+			
+	        statusText.textContent = "Recording stopped.";
+	        transcriptionText.textContent =
+	                "The recording is ready to be sent.";
+
+	        startButton.disabled = false;
+	        stopButton.disabled = true;
 	    }
 	</script>
