@@ -49,7 +49,6 @@
 	    let mediaRecorder;
 	    let mediaStream;
 	    let recordedChunks = [];
-		let recordingFormData;
 
 	    // Run the correct function when a button is clicked
 	    startButton.addEventListener("click", startRecording);
@@ -83,8 +82,8 @@
 						
 				// Prepare the complete audio file after recording stops
 				mediaRecorder.addEventListener(
-						"stop",
-						prepareRecording);
+				        "stop",
+				        sendRecording);
 
 	            mediaRecorder.start();
 
@@ -104,6 +103,7 @@
 	        }
 	    }
 
+		function stopRecording() {
 
 		    if (mediaRecorder == null
 		            || mediaRecorder.state !== "recording") {
@@ -123,7 +123,7 @@
 		            track => track.stop());
 		}
 		
-		function prepareRecording() {
+		async function sendRecording() {
 
 		    const mimeType =
 		            mediaRecorder.mimeType || "audio/webm";
@@ -134,18 +134,31 @@
 		                type: mimeType
 		            });
 
-		    // Create the multipart form expected by the controller
-		    recordingFormData = new FormData();
+		    const formData = new FormData();
 
-		    recordingFormData.append(
+		    formData.append(
 		            "audio",
 		            audioBlob,
 		            "recording.webm");
 
-		    statusText.textContent = "Recording ready.";
+		    statusText.textContent =
+		            "Recording stopped. Transcribing audio...";
 
-		    transcriptionText.textContent =
-		            "The audio is ready to be sent.";
+		    // Send the audio to the Java endpoint
+		    const response = await fetch(
+		            "/api/v1/transcriptions",
+		            {
+		                method: "POST",
+		                body: formData
+		            });
+
+		    const result = await response.json();
+
+		    // Display the transcription returned by Java
+		    transcriptionText.textContent = result.text;
+
+		    statusText.textContent =
+		            "Recording stopped. Transcription complete.";
 
 		    startButton.disabled = false;
 		    stopButton.disabled = true;
