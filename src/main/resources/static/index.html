@@ -144,24 +144,41 @@
 		    statusText.textContent =
 		            "Recording stopped. Transcribing audio...";
 
-		    // Send the audio to the Java endpoint
-		    const response = await fetch(
-		            "/api/v1/transcriptions",
-		            {
-		                method: "POST",
-		                body: formData
-		            });
+		    try {
+		        // Send the audio to the Java endpoint
+		        const response = await fetch(
+		                "/api/v1/transcriptions",
+		                {
+		                    method: "POST",
+		                    body: formData
+		                });
 
-		    const result = await response.json();
+		        const result = await response.json();
 
-		    // Display the transcription returned by Java
-		    transcriptionText.textContent = result.text;
+		        // Check whether the Java endpoint returned an error
+		        if (!response.ok) {
+		            throw new Error(
+		                    result.message
+		                    || "Transcription failed.");
+		        }
 
-		    statusText.textContent =
-		            "Recording stopped. Transcription complete.";
+		        transcriptionText.textContent = result.text;
 
-		    startButton.disabled = false;
-		    stopButton.disabled = true;
+		        statusText.textContent =
+		                "Recording stopped. Transcription complete.";
+
+		    } catch (error) {
+		        statusText.textContent =
+		                "Recording stopped. Transcription failed.";
+
+		        transcriptionText.textContent =
+		                error.message;
+
+		    } finally {
+		        // Prepare the buttons for another recording
+		        startButton.disabled = false;
+		        stopButton.disabled = true;
+		    }
 		}
 		
 	</script>
