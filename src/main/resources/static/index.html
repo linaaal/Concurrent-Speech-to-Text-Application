@@ -65,8 +65,15 @@
 	                        audio: true
 	                    });
 
-	            // Create the browser's audio recorder
-	            mediaRecorder = new MediaRecorder(mediaStream);
+						// Use WebM when supported or let the browser choose its normal format
+						const recorderOptions = {};
+
+						if (MediaRecorder.isTypeSupported("audio/webm")) {
+						    recorderOptions.mimeType = "audio/webm";
+						}
+
+						mediaRecorder = new MediaRecorder(mediaStream, recorderOptions);
+				
 
 	            recordedChunks = [];
 
@@ -125,8 +132,9 @@
 		
 		async function sendRecording() {
 
-		    const mimeType =
-		            mediaRecorder.mimeType || "audio/webm";
+		    const mimeType = mediaRecorder.mimeType || "audio/webm";
+			
+			const extension = getAudioExtension(mimeType);
 
 		    // Combine the recorded pieces into one audio file
 		    const audioBlob =
@@ -139,7 +147,7 @@
 		    formData.append(
 		            "audio",
 		            audioBlob,
-		            "recording.webm");
+		            "recording." + extension);
 
 		    statusText.textContent =
 		            "Recording stopped. Transcribing audio...";
@@ -179,6 +187,30 @@
 		        startButton.disabled = false;
 		        stopButton.disabled = true;
 		    }
+		}
+		
+
+		// Choose a file extension that matches the browser's audio format.
+
+		function getAudioExtension(mimeType) {
+
+		    if (mimeType.includes("mp4")) {
+		        return "m4a";
+		    }
+
+		    if (mimeType.includes("ogg")) {
+		        return "ogg";
+		    }
+
+		    if (mimeType.includes("mpeg")) {
+		        return "mp3";
+		    }
+
+		    if (mimeType.includes("wav")) {
+		        return "wav";
+		    }
+
+		    return "webm";
 		}
 		
 	</script>
