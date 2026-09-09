@@ -49,6 +49,7 @@
 	    let mediaRecorder;
 	    let mediaStream;
 	    let recordedChunks = [];
+		let recordingFormData;
 
 	    // Run the correct function when a button is clicked
 	    startButton.addEventListener("click", startRecording);
@@ -79,6 +80,11 @@
 	                            recordedChunks.push(event.data);
 	                        }
 	                    });
+						
+				// Prepare the complete audio file after recording stops
+				mediaRecorder.addEventListener(
+						"stop",
+						prepareRecording);
 
 	            mediaRecorder.start();
 
@@ -98,26 +104,51 @@
 	        }
 	    }
 
-	    function stopRecording() {
-	        // Do nothing if audio is not currently being recorded
-	        if (mediaRecorder == null
-	                || mediaRecorder.state !== "recording") {
 
-	            return;
-	        }
+		    if (mediaRecorder == null
+		            || mediaRecorder.state !== "recording") {
 
-	        mediaRecorder.stop();
+		        return;
+		    }
 
-	        // Turn off the microphone
-	        mediaStream.getTracks().forEach(
-	                track => track.stop());
+		    statusText.textContent =
+		            "Recording stopped. Preparing audio...";
 
-			
-	        statusText.textContent = "Recording stopped.";
-	        transcriptionText.textContent =
-	                "The recording is ready to be sent.";
+		    stopButton.disabled = true;
 
-	        startButton.disabled = false;
-	        stopButton.disabled = true;
-	    }
+		    mediaRecorder.stop();
+
+		    // Turn off the microphone
+		    mediaStream.getTracks().forEach(
+		            track => track.stop());
+		}
+		
+		function prepareRecording() {
+
+		    const mimeType =
+		            mediaRecorder.mimeType || "audio/webm";
+
+		    // Combine the recorded pieces into one audio file
+		    const audioBlob =
+		            new Blob(recordedChunks, {
+		                type: mimeType
+		            });
+
+		    // Create the multipart form expected by the controller
+		    recordingFormData = new FormData();
+
+		    recordingFormData.append(
+		            "audio",
+		            audioBlob,
+		            "recording.webm");
+
+		    statusText.textContent = "Recording ready.";
+
+		    transcriptionText.textContent =
+		            "The audio is ready to be sent.";
+
+		    startButton.disabled = false;
+		    stopButton.disabled = true;
+		}
+		
 	</script>
