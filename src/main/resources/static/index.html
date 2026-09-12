@@ -56,12 +56,34 @@
 		    .audio-wave span:nth-child(3) {
 		        height: 24px;
 		    }
+			
+			.record-button {
+			    min-width: 165px;
+			}
+
+			.start-button {
+			    background-color: #275d91;
+			    border-color: #275d91;
+			}
+
+			.start-button:hover {
+			    background-color: #1e4a74;
+			    border-color: #1e4a74;
+			}
+
+			.transcription-card {
+			    border-radius: 18px;
+			}
+
+			.transcription-output {
+			    min-height: 110px;
+			    background-color: #f7f9fc;
+			    border: 1px solid #d8e2ec;
+			    color: #52606d;
+			}
 		</style>
 		
 		
-		<h1 class="page-title">
-		    Speech to Text
-		</h1>
 </head>
 
 <body class="page-background">
@@ -101,29 +123,61 @@
 						    <span></span>
 						</div>
 
-				        <p id="status" aria-live="polite">
-				            Ready to record.
-				        </p>
+						<p id="status"
+						   class="fw-semibold mb-1"
+						   aria-live="polite">
 
-				        <button id="startButton" type="button">
-				            Start Recording
-				        </button>
+						    Ready to record.
+						</p>
 
-				        <button id="stopButton" type="button" disabled>
-				            Stop Recording
-				        </button>
+						<p class="text-secondary small mb-0">
+						    Press start and speak clearly into your microphone.
+						</p>
+
+						<div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mt-4">
+
+						    <button id="startButton"
+						            class="btn btn-primary start-button record-button"
+						            type="button">
+
+						        <i class="bi bi-record-circle me-2"
+						           aria-hidden="true"></i>
+
+						        Start Recording
+						    </button>
+
+						    <button id="stopButton"
+						            class="btn btn-outline-secondary record-button"
+						            type="button"
+						            disabled>
+
+						        <i class="bi bi-stop-circle me-2"
+						           aria-hidden="true"></i>
+
+						        Stop Recording
+						    </button>
+						</div>
 
 				    </div>
 
 				</section>
 
-        <section>
-            <h2>Transcription</h2>
+				<section class="card shadow-sm border-0 transcription-card">
 
-            <p id="transcription" aria-live="polite">
-                Transcription text...
-            </p>
-        </section>
+				    <div class="card-body p-4">
+
+				        <h2 class="h5 page-title mb-3">
+				            Transcription
+				        </h2>
+
+				        <p id="transcription"
+				           class="transcription-output rounded p-3 mb-0"
+				           aria-live="polite">
+
+				            Your transcription will appear here after recording.
+				        </p>
+				    </div>
+				</section>
 		
 		
 		</div>
