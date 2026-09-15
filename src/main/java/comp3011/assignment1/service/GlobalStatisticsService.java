@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import comp3011.assignment1.dto.GlobalStatsResponse;
 
+// Makes this class available to other Spring components as a service
 @Service
 public class GlobalStatisticsService {
 
@@ -17,9 +18,11 @@ public class GlobalStatisticsService {
     private final AtomicLong outputTokens = new AtomicLong(0);
 
     // Adds the token usage from one successful transcription
+
     public void recordUsage(long inputTokenCount, long outputTokenCount) {
 
         // Token counts should never be negative
+
         if (inputTokenCount < 0 || outputTokenCount < 0) {
             throw new IllegalArgumentException(
                     "Token counts cannot be negative.");
@@ -30,6 +33,7 @@ public class GlobalStatisticsService {
     }
 
     // Returns the current total token usage
+
     public GlobalStatsResponse getGlobalStats() {
         return new GlobalStatsResponse(
                 inputTokens.get(),

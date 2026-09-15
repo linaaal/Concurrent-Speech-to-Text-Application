@@ -17,25 +17,29 @@ import comp3011.assignment1.dto.TranscriptionResponse;
 import comp3011.assignment1.service.OpenAiTranscriptionService;
 import jakarta.servlet.http.HttpServletRequest;
 
+// Marks this class as a REST controller for transcription requests
 @RestController
 @RequestMapping("/api/v1/transcriptions")
 public class TranscriptionController {
 
     private final OpenAiTranscriptionService transcriptionService;
 
+    // Receives the transcription service through dependency injection
     public TranscriptionController(
             OpenAiTranscriptionService transcriptionService) {
 
         this.transcriptionService = transcriptionService;
     }
 
-	// Receives an audio recording and returns its transcription.
+    // Receives an audio recording and returns its transcription.
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> createTranscription(
             @RequestPart("audio") MultipartFile audioFile,
             HttpServletRequest request) {
 
         // Reject an empty recording before contacting OpenAI
+
         if (audioFile.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -48,15 +52,17 @@ public class TranscriptionController {
         }
 
         try {
+            // Sends the uploaded audio file to the transcription service
             String text =
                     transcriptionService.transcribe(audioFile);
 
+            // Returns the completed transcription with status 200
             return ResponseEntity.ok(
                     new TranscriptionResponse(text));
 
         } catch (RestClientResponseException exception) {
+            // Return a safe error without exposing details from the external OpenAI response.
 
-        	// Return a safe error without exposing details from the external OpenAI response.
             return ResponseEntity
                     .status(HttpStatus.BAD_GATEWAY)
                     .body(new ErrorResponse(
@@ -65,20 +71,17 @@ public class TranscriptionController {
                             HttpStatus.BAD_GATEWAY.getReasonPhrase(),
                             "The transcription service could not process the audio.",
                             request.getRequestURI()));
-        
-	    } catch (RuntimeException exception) {
-	
-	        return ResponseEntity
-	                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .body(new ErrorResponse(
-	                        Instant.now(),
-	                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-	                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-	                        "Unable to create the transcription.",
-	                        request.getRequestURI()));
-	    }
-        
-        
-        
+
+        } catch (RuntimeException exception) {
+            // Handles any other unexpected error inside the application
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(
+                            Instant.now(),
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                            "Unable to create the transcription.",
+                            request.getRequestURI()));
+        }
     }
 }

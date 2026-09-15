@@ -15,6 +15,7 @@ public class ServerUptimeService {
     private final Clock clock;
     private final Instant utcServerStart;
 
+    // Stores the clock and records when the server starts
     public ServerUptimeService(Clock clock) {
         this.clock = clock;
         this.utcServerStart = clock.instant();
@@ -22,8 +23,10 @@ public class ServerUptimeService {
 
     public UptimeResponse getUptime() {
 
+        // Gets the current time using the configured clock
         Instant utcNow = clock.instant();
 
+        // Calculates the server uptime in seconds
         double serverUptimeSeconds =
                 Duration.between(utcServerStart, utcNow).toNanos()
                 / 1_000_000_000.0;
@@ -33,5 +36,4 @@ public class ServerUptimeService {
                 utcNow,
                 serverUptimeSeconds);
     }
-
 }

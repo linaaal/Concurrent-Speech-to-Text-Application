@@ -16,6 +16,7 @@ import comp3011.assignment1.service.GracefulShutdownService;
 import comp3011.assignment1.service.ServerUptimeService;
 import jakarta.servlet.http.HttpServletRequest;
 
+// Marks this class as a REST controller that returns response data
 @RestController
 @RequestMapping("/api/v1/admin")
 public class AdministrationController {
@@ -23,6 +24,7 @@ public class AdministrationController {
     private final ServerUptimeService serverUptimeService;
     private final GracefulShutdownService gracefulShutdownService;
 
+    // Receives the services needed by the controller through dependency injection
     public AdministrationController(
             ServerUptimeService serverUptimeService,
             GracefulShutdownService gracefulShutdownService) {
@@ -32,20 +34,26 @@ public class AdministrationController {
     }
 
     // handles GET /api/v1/admin/uptime
+
     @GetMapping("/uptime")
     public UptimeResponse getServerUptime() {
+
+        // Gets the current uptime information from the service
         return serverUptimeService.getUptime();
     }
-    
+
     // handles POST /api/v1/admin/shutdown
+
     @PostMapping("/shutdown")
     public ResponseEntity<Object> requestShutdown(
-    		HttpServletRequest request) {
-    	
-    	try {
-    		boolean accepted =
-    				gracefulShutdownService.requestShutdown();
-    		
+            HttpServletRequest request) {
+
+        try {
+            // Returns true if this is the first shutdown request
+            boolean accepted =
+                    gracefulShutdownService.requestShutdown();
+
+            // Returns a conflict if shutdown has already been requested
             if (!accepted) {
                 return ResponseEntity
                         .status(HttpStatus.CONFLICT)
@@ -57,11 +65,14 @@ public class AdministrationController {
                                 request.getRequestURI()));
             }
 
+            // Confirms that the shutdown request was accepted
             return ResponseEntity
                     .status(HttpStatus.ACCEPTED)
                     .body(new ShutdownResponse(
                             "Graceful shutdown requested."));
+
         } catch (RuntimeException exception) {
+            // Returns a safe error response if shutdown unexpectedly fails
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(

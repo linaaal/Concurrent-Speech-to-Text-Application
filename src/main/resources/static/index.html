@@ -25,6 +25,7 @@
 		        border-radius: 18px;
 		    }
 
+			/* Adds movement to the microphone and sound wave while recording */
 		    .microphone-circle {
 		        width: 76px;
 		        height: 76px;
@@ -332,6 +333,7 @@
 			// Return the recorder design to its normal state
 			microphoneIndicator.classList.remove("recording");
 			audioWave.classList.remove("recording");
+			
 
 		    // Turn off the microphone
 		    mediaStream.getTracks().forEach(
