@@ -1,3 +1,36 @@
+/**
+ * Regression test for the requirement to handle more than 200
+ * simultaneous blocking HTTP requests.
+ *
+ * The test uses 220 requests because this is clearly above the required
+ * minimum. A stub transcription service blocks each request for two
+ * seconds, making the test repeatable without contacting OpenAI or using
+ * an API key.
+ *
+ * The five-second limit allows time for the two-second simulated delay
+ * and normal HTTP overhead. It would still reveal a design that processes
+ * the requests in large sequential batches.
+ *
+ * Expected results:
+ * - all 220 requests return HTTP 200;
+ * - more than 200 requests are active at the same time;
+ * - all requests finish in less than five seconds;
+ * - the application completes without crashing.
+ *
+ * Test environment and measured result:
+ * - tested on 15 September 2026;
+ * - MacBook Pro (Mac15,3);
+ * - Apple M3 with 8 cores;
+ * - 16 GB memory;
+ * - macOS 15.7.4;
+ * - Java 25.0.3 selected by Spring Tools for Maven;
+ * - Maven reported a test-class duration of 2.476 seconds.
+ *
+ * Passing this test provides evidence that Spring Boot virtual threads
+ * can handle the required number of blocking requests without a
+ * significant delay. Performance may differ on other machines.
+ */
+
 package comp3011.assignment1.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
