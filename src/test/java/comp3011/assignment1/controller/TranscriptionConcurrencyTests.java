@@ -1,3 +1,35 @@
+package comp3011.assignment1.controller;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.multipart.MultipartFile;
+
+import comp3011.assignment1.service.OpenAiTranscriptionService;
+
 /**
  * Regression test for the requirement to handle more than 200
  * simultaneous blocking HTTP requests.
@@ -30,38 +62,6 @@
  * can handle the required number of blocking requests without a
  * significant delay. Performance may differ on other machines.
  */
-
-package comp3011.assignment1.controller;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.multipart.MultipartFile;
-
-import comp3011.assignment1.service.OpenAiTranscriptionService;
 
 // Starts the full application on a random port using a fake API key
 @SpringBootTest(

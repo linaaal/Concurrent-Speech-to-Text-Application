@@ -11,6 +11,16 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+
+/**
+ * Checks that API requests produce useful logs without exposing
+ * sensitive information.
+ *
+ * The tests expect API method, path and status details to be logged,
+ * while authentication information is excluded. This provides
+ * confidence that logging is useful and safe.
+ */
+
 @ExtendWith(OutputCaptureExtension.class)
 class ApiRequestLoggingFilterTests {
 

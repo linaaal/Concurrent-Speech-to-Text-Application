@@ -25,9 +25,14 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import comp3011.assignment1.dto.GlobalStatsResponse;
 
-/*
- * Tests the transcription service without contacting
- * the real OpenAI API.
+/**
+ * Checks communication with the external transcription API using
+ * a mock HTTP server.
+ *
+ * The tests cover successful responses, empty audio, invalid
+ * responses and service failures without making real OpenAI calls.
+ * Passing them gives confidence that responses, statistics and
+ * errors are handled safely.
  */
 @ExtendWith(OutputCaptureExtension.class)
 class OpenAiTranscriptionServiceTests {

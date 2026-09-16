@@ -14,6 +14,14 @@ import org.junit.jupiter.api.Test;
 
 import comp3011.assignment1.dto.GlobalStatsResponse;
 
+/**
+ * Checks that token totals remain correct when many threads update
+ * them at the same time.
+ *
+ * The expected totals must match every completed update. Passing
+ * this test provides evidence that the atomic counters prevent
+ * lost updates and race conditions.
+ */
 class GlobalStatisticsServiceTests {
 
     @Test

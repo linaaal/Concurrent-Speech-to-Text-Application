@@ -18,7 +18,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import comp3011.assignment1.service.OpenAiTranscriptionService;
 
-// Loads only the TranscriptionController and the web components needed for these tests
+/**
+ * Checks the transcription REST endpoint using a stubbed
+ * transcription service.
+ *
+ * The tests cover successful, empty and failed requests without
+ * contacting OpenAI. Passing them gives confidence that the
+ * controller returns the correct responses and error statuses.
+ */
+
+
+//Loads only the TranscriptionController and the web components needed for these tests
 @WebMvcTest(TranscriptionController.class)
 class TranscriptionControllerTests {
 

@@ -14,6 +14,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import comp3011.assignment1.dto.GlobalStatsResponse;
 import comp3011.assignment1.service.GlobalStatisticsService;
 
+/**
+ * Checks that the global statistics endpoint returns the current
+ * input and output token totals.
+ *
+ * Passing this test gives confidence that stored usage information
+ * is correctly exposed through the REST API.
+ */
+
 // Loads only the GlobalStatisticsController and required web components
 @WebMvcTest(GlobalStatisticsController.class)
 class GlobalStatisticsControllerTests {

@@ -18,6 +18,15 @@ import comp3011.assignment1.dto.UptimeResponse;
 import comp3011.assignment1.service.GracefulShutdownService;
 import comp3011.assignment1.service.ServerUptimeService;
 
+/**
+ * Checks the uptime and graceful shutdown endpoints.
+ *
+ * The tests expect the correct status and response for successful,
+ * repeated and failed requests. Passing them gives confidence that
+ * the administration endpoints follow the required API behaviour.
+ */
+
+
 // Loads only the AdministrationController and required web components
 @WebMvcTest(AdministrationController.class)
 class AdministrationControllerTests {
